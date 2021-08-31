@@ -1,10 +1,11 @@
-
+import PokemonDetail from './components/PokemonDetail';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-<h1>HJello</h1>
+<h1>Welcome To Jacks Pokedex</h1>
+<PokemonDetail/>
     </div>
   );
 }
