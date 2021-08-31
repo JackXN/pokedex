@@ -6,7 +6,11 @@ import PokemonList from './components/PokemonList';
 // import PokemonDetail from './components/PokemonDetail';
 import axios from 'axios';
 import Pagination from './components/Pagination'
-import Pokemon from './Services/Pokemon';
+import {
+  getAllPokemon, 
+  getPokemon,
+}
+from './Services/Pokemon';
 
 function App() {
 const [pokemon,setPokemon] = useState([]);
@@ -40,29 +44,52 @@ const [loading, setLoading] = useState(true);
 // }, [currentPageUrl])
 
 //  //! Regular UseEffect Call
-useEffect(() => {
-  setLoading(true);
-  fetch(currentPageUrl)
-  .then((res) => res.json())
-.then((data) => {
-  console.log(data.results)
-  setPokemon(data.results.map(p => p.name))
-})
-.then(setLoading(false))
+// useEffect(() => {
+//   setLoading(true);
+//   fetch(currentPageUrl)
+//   .then((res) => res.json())
+// .then((data) => {
+//   // console.log(data.results)
+//   setPokemon(data.results.map(p => p.name))
+// })
+// .then(setLoading(false))
 
-  .catch((error) => {
-    console.log(error);
-  })
-}, [currentPageUrl])
+//   .catch((error) => {
+//     console.log(error);
+//   })
+// }, [currentPageUrl])
+
+
+
+//! Async/Await Method
+useEffect(() => {
+  const fetchData = async() => {
+    let response = await getAllPokemon(currentPageUrl)
+    setNextPageUrl(response.next)
+    setPrevPageUrl(response.previous)
+    let pokemon = await loadingPokemon(response.results)
+  
+    setLoading(false)
+  }
+  fetchData()
+  console.log(pokemon)
+}, [])
+
 
 
  //*Loading Pokemon
  const loadingPokemon = async (data) => {
 let _pokemon = await Promise.all(data.map(async pokemon => {
-  let pokemonRecord = await getPokemon(pokemon)
+  let pokemonRecord = await getPokemon(pokemon.url)
+  return pokemonRecord
+ 
 }))
+
+setPokemon(_pokemon)
+
  }
 
+// console.log(pokemon)
 
 if(loading) {
   return 'Loading...';
