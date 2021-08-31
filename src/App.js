@@ -27,15 +27,26 @@ setPokemon(res.data.results.map(p => p.name))
   setPrevPageUrl(res.data.previous)
   setPokemon(res.data.results.map(p => p.name))
 })
+
 return () =>  cancel()
 }, [currentPageUrl])
-
-
 
 
 if(loading) {
   return 'Loading...';
 }
+
+// Page Handlers
+
+const gotToNextPage = () => {
+  setCurrentPageUrl(nextPageUrl);
+}
+
+const goToPreviousPage = () => {
+  setCurrentPageUrl([prevPageUrl]);
+}
+
+
 
   return (
     <div className="App">
