@@ -6,6 +6,7 @@ import PokemonList from './components/PokemonList';
 // import PokemonDetail from './components/PokemonDetail';
 import axios from 'axios';
 import Pagination from './components/Pagination'
+import Pokemon from './Services/Pokemon';
 
 function App() {
 const [pokemon,setPokemon] = useState([]);
@@ -16,28 +17,58 @@ const [loading, setLoading] = useState(true);
 
 
 
-useEffect(() => {
-  setLoading(true)
-  let cancel;
-  // ? Cancel token  takes an a function and returns the cancel token we need
-  //? Everytime axios makes a call, its going to set the cancel variable to the new cancel token
-axios.get(currentPageUrl, {cancelToken: new axios.CancelToken(c => cancel = c)}).then(res => {
-setLoading(false)  
-setPokemon(res.data.results.map(p => p.name))
-  setNextPageUrl(res.data.next);
-  setPrevPageUrl(res.data.previous)
-  setPokemon(res.data.results.map(p => p.name))
-})
+//! AXIOS GET REQUEST
 
-return () =>  cancel()
+// useEffect(() => {
+// //Set loading to true before api call
+//   setLoading(true);
+//   let cancel;
+//   // ? Cancel token  takes an a function and returns the cancel token we need
+//   //? Everytime axios makes a call, its going to set the cancel variable to the new cancel token
+// axios.get(currentPageUrl, {cancelToken: new axios.CancelToken(c => cancel = c)}).then(res => {
+//   //After api has been fetched set loading to false
+//   console.log(pokemon)
+// setLoading(false)   
+// // setPokemon(res.data.results.map(p => p.name))
+//   setNextPageUrl(res.data.next);
+//   setPrevPageUrl(res.data.previous)
+
+// })
+
+// return () =>  cancel();
+
+// }, [currentPageUrl])
+
+//  //! Regular UseEffect Call
+useEffect(() => {
+  setLoading(true);
+  fetch(currentPageUrl)
+  .then((res) => res.json())
+.then((data) => {
+  console.log(data.results)
+  setPokemon(data.results.map(p => p.name))
+})
+.then(setLoading(false))
+
+  .catch((error) => {
+    console.log(error);
+  })
 }, [currentPageUrl])
+
+
+ //*Loading Pokemon
+ const loadingPokemon = async (data) => {
+let _pokemon = await Promise.all(data.map(async pokemon => {
+  let pokemonRecord = await getPokemon(pokemon)
+}))
+ }
 
 
 if(loading) {
   return 'Loading...';
 }
 
-// Page Handlers
+//* Page Handlers
 
 const goToNextPage = () => {
   setCurrentPageUrl(nextPageUrl);
@@ -60,3 +91,4 @@ goToPreviousPage={prevPageUrl ?  goToPreviousPage : null}/>
 }
 
 export default App;
+ 
