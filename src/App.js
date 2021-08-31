@@ -19,6 +19,7 @@ useEffect(() => {
   setLoading(true)
   let cancel;
   // ? Cancel token  takes an a function and returns the cancel token we need
+  //? Everytime axios makes a call, its going to set the cancel variable to the new cancel token
 axios.get(currentPageUrl, {cancelToken: new axios.CancelToken(c => cancel = c)}).then(res => {
 setLoading(false)  
 setPokemon(res.data.results.map(p => p.name))
@@ -26,6 +27,7 @@ setPokemon(res.data.results.map(p => p.name))
   setPrevPageUrl(res.data.previous)
   setPokemon(res.data.results.map(p => p.name))
 })
+return () =>  cancel()
 }, [currentPageUrl])
 
 
